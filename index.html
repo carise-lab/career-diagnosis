@@ -3,69 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>キャリア診断ツール</title>
+<title>キャリア診断ツール | carise</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;background:#f5f5f3;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 16px}
-#wrap{width:100%;max-width:680px;display:flex;flex-direction:column;gap:12px}
-#title-card{background:#fff;border-radius:16px;padding:24px;border:1px solid #e8e8e4;text-align:center}
-#title-card h1{font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:6px}
-#title-card p{font-size:13px;color:#666;line-height:1.6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;background:#f4f4f2;min-height:100vh;padding:20px 16px}
+
+/* ===== チャット画面 ===== */
+#chat-wrap{width:100%;max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.title-card{background:#fff;border-radius:16px;padding:28px 24px;border:1px solid #e5e5e0;text-align:center}
+.title-card h1{font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
+.title-card p{font-size:13px;color:#777;line-height:1.7}
+.title-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;background:#f0f0ee;color:#888;margin-bottom:12px}
 #steps-bar{display:flex;gap:6px;overflow-x:auto;padding:2px}
-.sp{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid #ddd;color:#888;background:#fff;white-space:nowrap;transition:all .2s;font-weight:400}
-.sp.active{background:#1a1a2e;color:#fff;border-color:#1a1a2e;font-weight:500}
-.sp.done{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}
-#chat-box{background:#fff;border-radius:16px;border:1px solid #e8e8e4;overflow:hidden;display:flex;flex-direction:column;min-height:420px}
-#msgs{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:12px;max-height:400px}
+.sp{font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid #ddd;color:#999;background:#fff;white-space:nowrap;transition:all .2s;font-weight:400}
+.sp.active{background:#111827;color:#fff;border-color:#111827;font-weight:600}
+.sp.done{background:#ecfdf5;color:#065f46;border-color:#6ee7b7}
+#chat-box{background:#fff;border-radius:16px;border:1px solid #e5e5e0;overflow:hidden;display:flex;flex-direction:column}
+#msgs{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:12px;max-height:440px}
 .msg{display:flex;gap:10px;align-items:flex-start}
-.msg.ai{align-self:flex-start;max-width:90%}
+.msg.ai{align-self:flex-start;max-width:92%}
 .msg.usr{align-self:flex-end;flex-direction:row-reverse;max-width:85%}
-.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
-.ai .av{background:#e8eaf6;color:#3949ab}
-.usr .av{background:#e8f5e9;color:#2e7d32}
-.bbl{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.7;white-space:pre-wrap}
-.ai .bbl{background:#f7f7f5;color:#1a1a1a;border:1px solid #eee;border-top-left-radius:4px}
-.usr .bbl{background:#1a1a2e;color:#fff;border-top-right-radius:4px}
-#choices-area{padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid #f0f0ee;min-height:60px;align-content:flex-start}
-.cb{font-size:13px;padding:7px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer;transition:all .15s;line-height:1.4;text-align:left}
+.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.ai .av{background:#ede9fe;color:#5b21b6}
+.usr .av{background:#d1fae5;color:#065f46}
+.bbl{padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.75;white-space:pre-wrap}
+.ai .bbl{background:#f9f9f7;color:#1a1a1a;border:1px solid #eee;border-top-left-radius:4px}
+.usr .bbl{background:#111827;color:#fff;border-top-right-radius:4px}
+#choices-area{padding:10px 14px;display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid #f0f0ee;min-height:56px;align-content:flex-start}
+.cb{font-size:12px;padding:7px 14px;border-radius:20px;border:1px solid #e0e0e0;background:#fff;color:#1a1a1a;cursor:pointer;transition:all .15s;line-height:1.4;text-align:left;font-family:inherit}
 .cb:hover{background:#f5f5f3;border-color:#aaa}
-.cb.sel{background:#e8eaf6;color:#1a237e;border-color:#9fa8da}
-#input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #f0f0ee}
+.cb.sel{background:#ede9fe;color:#3730a3;border-color:#a5b4fc}
+#input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid #f0f0ee}
 #inp{flex:1;font-size:13px;padding:9px 13px;border-radius:10px;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-family:inherit}
-#inp:focus{outline:none;border-color:#9fa8da}
-#sbtn{padding:9px 18px;border-radius:10px;border:none;background:#1a1a2e;color:#fff;cursor:pointer;font-size:13px;font-family:inherit}
-#sbtn:hover{background:#2d2d4e}
+#inp:focus{outline:none;border-color:#a5b4fc}
+#sbtn{padding:9px 18px;border-radius:10px;border:none;background:#111827;color:#fff;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600}
 .typing{display:flex;gap:4px;padding:10px 14px;align-items:center}
-.dot{width:6px;height:6px;border-radius:50%;background:#bbb;animation:bounce 1.2s infinite}
+.dot{width:5px;height:5px;border-radius:50%;background:#ccc;animation:bounce 1.2s infinite}
 .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
-.rc{background:#f7f7f5;border:1px solid #eee;border-radius:14px;padding:16px;font-size:13px;line-height:1.7;width:100%}
-.rc h3{font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a}
-.tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin:2px 3px 2px 0;font-weight:500}
-.tb{background:#e8eaf6;color:#1a237e}
-.tg{background:#e8f5e9;color:#1b5e20}
-.ta{background:#fff3e0;color:#e65100}
-.tp{background:#fce4ec;color:#880e4f}
-.sec{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #eee}
-.sec:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-.sl{font-size:11px;color:#888;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.restart-btn{font-size:13px;padding:10px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer;margin-top:12px;width:100%;font-family:inherit}
-.restart-btn:hover{background:#f5f5f3}
-.progress{font-size:11px;color:#aaa;padding:8px 16px;text-align:right;border-top:1px solid #f0f0ee}
-#free-inp{font-size:13px;padding:7px 13px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#1a1a1a;width:100%;margin-top:4px;font-family:inherit}
-#free-inp:focus{outline:none;border-color:#9fa8da}
-.confirm-btn{font-size:13px;padding:7px 14px;border-radius:20px;border:1px solid #a5d6a7;background:#e8f5e9;color:#1b5e20;cursor:pointer;width:100%;text-align:left;margin-top:4px}
+.confirm-btn{font-size:12px;padding:7px 14px;border-radius:20px;border:1px solid #6ee7b7;background:#ecfdf5;color:#065f46;cursor:pointer;width:100%;text-align:left;margin-top:4px;font-family:inherit}
+#free-inp{font-size:12px;padding:7px 13px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#1a1a1a;width:100%;margin-top:4px;font-family:inherit}
+
+/* ===== 結果画面 ===== */
+#result-page{display:none;width:100%;max-width:700px;margin:0 auto}
+.r-hero{background:#111827;border-radius:20px;padding:32px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.r-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:rgba(139,92,246,.15);border-radius:50%}
+.r-hero::after{content:'';position:absolute;bottom:-60px;left:-30px;width:200px;height:200px;background:rgba(16,185,129,.08);border-radius:50%}
+.r-hero h2{font-size:24px;font-weight:700;color:#fff;margin-bottom:8px;position:relative}
+.r-hero p{font-size:13px;color:#9ca3af;line-height:1.7;position:relative}
+.r-hero .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative}
+.hero-badge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600}
+.hb-purple{background:rgba(139,92,246,.2);color:#c4b5fd}
+.hb-green{background:rgba(16,185,129,.2);color:#6ee7b7}
+.hb-amber{background:rgba(245,158,11,.2);color:#fcd34d}
+.hb-blue{background:rgba(59,130,246,.2);color:#93c5fd}
+
+.r-card{background:#fff;border-radius:16px;border:1px solid #e5e5e0;padding:24px;margin-bottom:14px}
+.r-card-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #f0f0ee}
+.r-num{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.rn-purple{background:#ede9fe;color:#5b21b6}
+.rn-orange{background:#fff7ed;color:#c2410c}
+.rn-green{background:#ecfdf5;color:#065f46}
+.rn-pink{background:#fdf2f8;color:#86198f}
+.rn-dark{background:#f3f4f6;color:#374151}
+.r-card-title{font-size:16px;font-weight:700;color:#1a1a1a}
+.r-card-sub{font-size:12px;color:#888;margin-top:2px}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tag{display:inline-block;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
+.t-purple{background:#ede9fe;color:#3730a3}
+.t-green{background:#ecfdf5;color:#065f46}
+.t-orange{background:#fff7ed;color:#c2410c}
+.t-pink{background:#fdf2f8;color:#86198f}
+.t-gray{background:#f3f4f6;color:#374151}
+.t-blue{background:#eff6ff;color:#1d4ed8}
+
+.desc-main{background:#f9f9f7;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.85;color:#333;margin-bottom:12px;border-left:3px solid #8b5cf6}
+.desc-box{background:#f9f9f7;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.85;color:#333;margin-bottom:10px}
+.desc-title{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.desc-job{font-size:11px;color:#6b7280;margin-top:6px;padding-top:6px;border-top:1px solid #eee}
+.desc-job::before{content:'→ 向いている仕事：';font-weight:600}
+
+.env-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.env-card{border-radius:10px;padding:12px 14px}
+.env-good{background:#ecfdf5;border:1px solid #a7f3d0}
+.env-bad{background:#fff1f2;border:1px solid #fecdd3}
+.env-card h4{font-size:11px;font-weight:700;margin-bottom:6px}
+.env-good h4{color:#065f46}
+.env-bad h4{color:#be123c}
+.env-card ul{padding-left:14px;font-size:12px;line-height:1.8;color:#374151}
+
+.rank-list{display:flex;flex-direction:column;gap:0}
+.rank-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f3}
+.rank-row:last-child{border-bottom:none}
+.rank-medal{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.m1{background:#FEF9C3;color:#713f12}
+.m2{background:#f3f4f6;color:#4b5563}
+.m3{background:#fff7ed;color:#9a3412}
+.m-other{background:#f9fafb;color:#9ca3af;font-size:10px}
+.rank-info{flex:1}
+.rank-label{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:3px}
+.rank-desc{font-size:12px;color:#6b7280;line-height:1.6}
+.rank-pt{font-size:12px;font-weight:600;color:#9ca3af;white-space:nowrap;margin-top:4px}
+
+.life-tl{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:14px}
+.tl-left{display:flex;flex-direction:column;align-items:center}
+.tl-dot{width:12px;height:12px;border-radius:50%;background:#111827;flex-shrink:0;margin-top:3px}
+.tl-dot.now{background:#8b5cf6}
+.tl-line{width:2px;flex:1;background:#e5e7eb;margin:4px 0}
+.tl-content{padding-bottom:20px;flex:1}
+.tl-period{font-size:11px;font-weight:700;color:#8b5cf6;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.tl-text{font-size:13px;color:#1a1a1a;line-height:1.65;font-weight:500}
+
+.action-box{background:#111827;border-radius:14px;padding:18px 20px;margin-top:14px}
+.action-box h4{font-size:13px;font-weight:700;color:#e5e7eb;margin-bottom:10px}
+.action-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.action-item:last-child{margin-bottom:0}
+.action-num{width:20px;height:20px;border-radius:50%;background:#374151;color:#d1d5db;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.action-text{font-size:12px;color:#d1d5db;line-height:1.65}
+
+.soken-card{background:#111827;border-radius:16px;padding:24px;margin-bottom:14px}
+.soken-card h3{font-size:14px;font-weight:700;color:#9ca3af;margin-bottom:12px;letter-spacing:.5px}
+.soken-card p{font-size:14px;line-height:1.95;color:#e5e7eb}
+
+.warn-strip{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;font-size:12px;color:#92400e;line-height:1.7;margin-top:10px}
+.warn-strip::before{content:'⚠️  ';font-size:13px}
+
+.btn-row{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+.btn-pdf{flex:1;min-width:200px;padding:14px 20px;border-radius:12px;border:none;background:#111827;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;letter-spacing:.3px}
+.btn-pdf:hover{background:#1f2937}
+.btn-restart{flex:1;min-width:140px;padding:14px 20px;border-radius:12px;border:1px solid #e5e5e0;background:#fff;color:#374151;font-size:13px;cursor:pointer;font-family:inherit;text-align:center}
+.btn-restart:hover{background:#f9f9f7}
+.footer-note{font-size:11px;color:#bbb;text-align:center;padding:12px 0 4px}
+
+@media(max-width:500px){.env-grid{grid-template-columns:1fr}.btn-row{flex-direction:column}}
 </style>
 </head>
 <body>
-<div id="wrap">
-  <div id="title-card">
+
+<!-- チャット画面 -->
+<div id="chat-wrap">
+  <div class="title-card">
+    <div class="title-badge">carise キャリア診断</div>
     <h1>🧭 キャリア診断ツール</h1>
     <p>価値観・興味・強み・理想の生活<br>4ステップで、あなたのキャリア軸を言語化する</p>
   </div>
   <div id="steps-bar">
     <div class="sp active" id="s1">① 価値観</div>
-    <div class="sp" id="s2">② 興味</div>
+    <div class="sp" id="s2">② 興味（RIASEC）</div>
     <div class="sp" id="s3">③ 強み</div>
     <div class="sp" id="s4">④ 理想の生活</div>
     <div class="sp" id="s5">🎯 結果</div>
@@ -81,39 +168,157 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
   <div style="font-size:11px;color:#aaa;text-align:center;padding:4px 0">所要時間：約8〜10分　|　スマホ・PCどちらでもOK</div>
 </div>
 
+<!-- 結果画面 -->
+<div id="result-page">
+  <div id="result-content">
+
+    <!-- ヒーロー -->
+    <div class="r-hero">
+      <h2>🎯 キャリア診断 結果レポート</h2>
+      <p>価値観・興味・強み・理想の生活をもとに、あなたのキャリア軸を分析しました</p>
+      <div class="badge-row" id="hero-badges"></div>
+    </div>
+
+    <!-- 総合所見 -->
+    <div class="soken-card">
+      <h3>📋 TOTAL SUMMARY</h3>
+      <p id="soken-text"></p>
+    </div>
+
+    <!-- ① 価値観 -->
+    <div class="r-card">
+      <div class="r-card-header">
+        <div class="r-num rn-purple">①</div>
+        <div><div class="r-card-title">価値観 — 仕事に何を求めるか</div><div class="r-card-sub">O*NET Work Values（厚生労働省も使用）</div></div>
+      </div>
+      <div class="tag-row" id="val-tags"></div>
+      <div class="desc-main" id="val-main"></div>
+      <div id="val-items"></div>
+      <div class="env-grid" id="val-env"></div>
+      <div class="warn-strip" id="val-warn"></div>
+    </div>
+
+    <!-- ② 興味 -->
+    <div class="r-card">
+      <div class="r-card-header">
+        <div class="r-num rn-orange">②</div>
+        <div><div class="r-card-title">興味タイプ — 何に没頭できるか</div><div class="r-card-sub">RIASEC（厚生労働省も使用）</div></div>
+      </div>
+      <div class="rank-list" id="int-ranks"></div>
+      <div class="desc-box" style="margin-top:14px" id="int-main"></div>
+      <div class="env-grid" id="int-env"></div>
+    </div>
+
+    <!-- ③ 強み -->
+    <div class="r-card">
+      <div class="r-card-header">
+        <div class="r-num rn-green">③</div>
+        <div><div class="r-card-title">強み — 自然にやってしまうこと</div><div class="r-card-sub">ストレングスファインダー（Gallup）準拠</div></div>
+      </div>
+      <div class="tag-row" id="str-tags"></div>
+      <div id="str-items"></div>
+      <div class="env-grid" id="str-env"></div>
+    </div>
+
+    <!-- ④ 理想の生活 -->
+    <div class="r-card">
+      <div class="r-card-header">
+        <div class="r-num rn-pink">④</div>
+        <div><div class="r-card-title">理想の生活ロードマップ</div><div class="r-card-sub">現状 → 短期 → 中期 → 長期</div></div>
+      </div>
+      <div class="life-tl" id="life-tl"></div>
+      <div class="action-box" id="action-box">
+        <h4>🚀 今すぐ取り組むべきこと</h4>
+        <div id="action-items"></div>
+      </div>
+    </div>
+
+    <!-- ボタン -->
+    <div class="btn-row">
+      <button class="btn-pdf" onclick="downloadPDF()">📄 PDFでダウンロード</button>
+      <button class="btn-restart" onclick="location.reload()">🔄 もう一度診断する</button>
+    </div>
+    <div class="footer-note">carise キャリア診断ツール　|　キャリアアドバイザーが設計</div>
+  </div>
+</div>
+
 <script>
-const SC={step:1,sub:0,val:{達成感:0,独立性:0,評価認知:0,人間関係:0,社会貢献:0,労働条件:0},int:{R:0,I:0,A:0,S:0,E:0,C:0},str:{実行力:0,影響力:0,人間関係構築力:0,戦略的思考力:0},life:{short:'',mid:'',long:'',now:''}};
+const SC={step:1,sub:0,
+  val:{達成感:0,独立性:0,評価認知:0,人間関係:0,社会貢献:0,労働条件:0},
+  int:{R:0,I:0,A:0,S:0,E:0,C:0},
+  str:{実行力:0,影響力:0,人間関係構築力:0,戦略的思考力:0},
+  life:{short:'',mid:'',long:'',now:''}
+};
 
 const FLOW={
   1:[
-    {q:'はじめまして！\n\nこのツールは「価値観・興味・強み・理想の生活」の4ステップで、あなたに合った仕事環境を言語化していきます。所要時間は約8〜10分です。\n\nまず「価値観」から。仕事をしていて一番「合わないな」と感じた経験はどれですか？',ch:['数字・ノルマに毎日追われた','誰も助けてくれない孤独感があった','同じ作業の繰り返しで成長感がなかった','頑張っても評価・感謝されなかった','やり方を全部決められて自分で動けなかった','誠実にできない場面があった'],multi:false},
-    {q:'逆に「この環境は最高だ！」と感じた瞬間に近いのはどれですか？',ch:['目標達成・数字で成果が出た','チームで協力して何かを成し遂げた','自分のペースで仕事を進められた','人から感謝・評価された','誰かの役に立てる実感があった','安定して長く続けられる環境だった'],multi:false},
-    {q:'仕事を選ぶとき「これだけは絶対に譲れない」条件を選んでください。（複数OK）',ch:['成果が収入・評価に直結する','自分で仕事の進め方を決められる','助け合えるチームワークがある','社会的に意味を感じられる','安定した働き方（時間・休日）','人の成長に関わり続けられる'],multi:true},
-    {q:'仕事で「納得できない」と感じるのはどんなときですか？',ch:['会社の方針や文化が自分と合わないとき','スピードより丁寧さを求めているのに逆のとき','個人プレーを求められ協力しにくいとき','頑張りが数字に反映されないとき'],multi:false}
+    {q:'はじめまして！\n\nこのツールは「価値観・興味・強み・理想の生活」の4ステップで、あなたに合った仕事環境を言語化していきます。所要時間は約8〜10分です。\n\nまず「価値観」から。仕事をしていて一番「合わないな」と感じた経験はどれですか？',
+     ch:['数字・ノルマに毎日追われた','誰も助けてくれない孤独感があった','同じ作業の繰り返しで成長感がなかった','頑張っても評価・感謝されなかった','やり方を全部決められて自分で動けなかった','誠実にできない場面があった'],multi:false},
+    {q:'逆に「この環境は最高だ！」と感じた瞬間に近いのはどれですか？',
+     ch:['目標達成・数字で成果が出た','チームで協力して何かを成し遂げた','自分のペースで仕事を進められた','人から感謝・評価された','誰かの役に立てる実感があった','安定して長く続けられる環境だった'],multi:false},
+    {q:'仕事を選ぶとき「これだけは絶対に譲れない」条件を選んでください。（複数OK）',
+     ch:['成果が収入・評価に直結する','自分で仕事の進め方を決められる','助け合えるチームワークがある','社会的に意味を感じられる','安定した働き方（時間・休日）','人の成長に関わり続けられる'],multi:true},
+    {q:'仕事で「納得できない」と感じるのはどんなときですか？',
+     ch:['会社の方針や文化が自分と合わないとき','スピードより丁寧さを求めているのに逆のとき','個人プレーを求められ協力しにくいとき','頑張りが数字に反映されないとき'],multi:false}
   ],
   2:[
-    {q:'価値観が見えてきました！次は「興味」です。\n\n同じ給与・時間の仕事でも、興味に合うかどうかで満足度と成長速度が大きく変わります。\n\nどちらをより「やってみたい」と感じますか？',ch:['A: データを分析して仮説を検証する','B: 人に寄り添い課題を一緒に解決する'],multi:false},
+    {q:'価値観が見えてきました！次は「興味」です。\n\n同じ給与・時間の仕事でも、興味に合うかどうかで満足度と成長速度が大きく変わります。\n\nどちらをより「やってみたい」と感じますか？',
+     ch:['A: データを分析して仮説を検証する','B: 人に寄り添い課題を一緒に解決する'],multi:false},
     {q:'次はどちらですか？',ch:['A: ゼロから企画・表現物を作り上げる','B: ルールや手順に沿って正確に処理する'],multi:false},
     {q:'次はどちらですか？',ch:['A: 人や組織を動かして大きな成果を出す','B: モノや仕組みを手を動かして実際に作る'],multi:false},
-    {q:'「ついつい時間を忘れてしまう」に近い経験はどれですか？',ch:['なぜうまくいかないのか原因を調べているとき','人の話を聞いて一緒に考えているとき','新しいアイデアやコンテンツを作っているとき','目標に向けてチームを引っ張っているとき','データや数字を整理・整頓しているとき'],multi:false}
+    {q:'「ついつい時間を忘れてしまう」に近い経験はどれですか？',
+     ch:['なぜうまくいかないのか原因を調べているとき','人の話を聞いて一緒に考えているとき','新しいアイデアやコンテンツを作っているとき','目標に向けてチームを引っ張っているとき','データや数字を整理・整頓しているとき'],multi:false}
   ],
   3:[
-    {q:'興味のタイプも分かってきました！次は「強み」です。\n\n強みとは「努力しなくても自然にやってしまうこと」です。\n\n職場でついやってしまうことに近いのはどれですか？',ch:['やることをリスト化して確実に片付ける','困っている人に自然と声をかけてしまう','「なぜ？」と原因・仕組みを考え続ける','「こうすればもっと良くなる」と改善策を出してしまう','その場の雰囲気を明るくしたり盛り上げたりしてしまう'],multi:false},
-    {q:'チームで仕事するとき、気づいたら担っている役割はどれですか？',ch:['スケジュール・タスク管理をまとめる役','話しやすい雰囲気をつくるサポート役','戦略・アイデアを出す参謀役','みんなを巻き込んで引っ張るリーダー役'],multi:false},
-    {q:'「しんどいな」と思いながらも気づいたらやり続けていることは？',ch:['最後まできっちりやり抜くこと','人の悩みを聞き続けること','情報を整理・分析し続けること','新しいことを考え続けること','周りのモチベーションを上げ続けること'],multi:false},
-    {q:'他の人に「なんでそんなに◯◯できるの？」と言われたことに近いのは？',ch:['ミスなく丁寧にこなせること','誰とでも自然に仲良くなれること','論理的に筋道を立てて考えられること','人を動かしてチームをまとめられること'],multi:false}
+    {q:'興味のタイプも分かってきました！次は「強み」です。\n\n強みとは「努力しなくても自然にやってしまうこと」です。\n\n職場でついやってしまうことに近いのはどれですか？',
+     ch:['やることをリスト化して確実に片付ける','困っている人に自然と声をかけてしまう','「なぜ？」と原因・仕組みを考え続ける','「こうすればもっと良くなる」と改善策を出してしまう','その場の雰囲気を明るくしたり盛り上げたりしてしまう'],multi:false},
+    {q:'チームで仕事するとき、気づいたら担っている役割はどれですか？',
+     ch:['スケジュール・タスク管理をまとめる役','話しやすい雰囲気をつくるサポート役','戦略・アイデアを出す参謀役','みんなを巻き込んで引っ張るリーダー役'],multi:false},
+    {q:'「しんどいな」と思いながらも気づいたらやり続けていることは？',
+     ch:['最後まできっちりやり抜くこと','人の悩みを聞き続けること','情報を整理・分析し続けること','新しいことを考え続けること','周りのモチベーションを上げ続けること'],multi:false},
+    {q:'他の人に「なんでそんなに◯◯できるの？」と言われたことに近いのは？',
+     ch:['ミスなく丁寧にこなせること','誰とでも自然に仲良くなれること','論理的に筋道を立てて考えられること','人を動かしてチームをまとめられること'],multi:false}
   ],
   4:[
-    {q:'最後は「理想の生活」です。\n\n理想と現状のギャップから「今何をすべきか」が見えてきます。\n\n短期（1〜2年後）、どんな働き方をしていたいですか？',ch:['今より収入を上げて安定させたい','スキルを磨いてキャリアアップしたい','もっと自分の時間・裁量がほしい','副業・複数収入源を持ちたい','転職して新しい環境に移りたい'],multi:false,free:true},
-    {q:'中期（3〜5年後）はどんな生活をイメージしていますか？',ch:['マネジメント・リーダーポジションに就く','専門家として独立・フリーに近い形で働く','副業が軌道に乗り収入の柱を増やす','ライフイベントと両立できる環境をつくる','起業・事業を立ち上げる'],multi:false,free:true},
-    {q:'長期（5年以上先）の理想は？どれくらいの収入・働き方をイメージしていますか？',ch:['年収800万〜1000万を実現したい','場所・時間を選ばず働けるようにしたい','自分のブランド・事業を持ちたい','仕事とプライベートのバランスを最優先にしたい','社会への影響力を持つポジションに就きたい'],multi:false,free:true},
-    {q:'今の状況を一言で表すと？',ch:['仕事は安定しているが成長実感がない','やりがいはあるが収入・評価が不満','転職を考えているが軸が決まっていない','副業・独立を視野に入れて動き始めている','現状に満足しており更なる成長を目指している'],multi:false}
+    {q:'最後は「理想の生活」です。\n\n理想と現状のギャップから「今何をすべきか」が見えてきます。\n\n短期（1〜2年後）、どんな働き方をしていたいですか？',
+     ch:['今より収入を上げて安定させたい','スキルを磨いてキャリアアップしたい','もっと自分の時間・裁量がほしい','副業・複数収入源を持ちたい','転職して新しい環境に移りたい'],multi:false,free:true},
+    {q:'中期（3〜5年後）はどんな生活をイメージしていますか？',
+     ch:['マネジメント・リーダーポジションに就く','専門家として独立・フリーに近い形で働く','副業が軌道に乗り収入の柱を増やす','ライフイベントと両立できる環境をつくる','起業・事業を立ち上げる'],multi:false,free:true},
+    {q:'長期（5年以上先）の理想は？どれくらいの収入・働き方をイメージしていますか？',
+     ch:['年収800万〜1000万を実現したい','場所・時間を選ばず働けるようにしたい','自分のブランド・事業を持ちたい','仕事とプライベートのバランスを最優先にしたい','社会への影響力を持つポジションに就きたい'],multi:false,free:true},
+    {q:'今の状況を一言で表すと？',
+     ch:['仕事は安定しているが成長実感がない','やりがいはあるが収入・評価が不満','転職を考えているが軸が決まっていない','副業・独立を視野に入れて動き始めている','現状に満足しており更なる成長を目指している'],multi:false}
   ]
 };
 
 const VM={'数字・ノルマに毎日追われた':'達成感','誰も助けてくれない孤独感があった':'人間関係','同じ作業の繰り返しで成長感がなかった':'達成感','頑張っても評価・感謝されなかった':'評価認知','やり方を全部決められて自分で動けなかった':'独立性','誠実にできない場面があった':'社会貢献','目標達成・数字で成果が出た':'達成感','チームで協力して何かを成し遂げた':'人間関係','自分のペースで仕事を進められた':'独立性','人から感謝・評価された':'評価認知','誰かの役に立てる実感があった':'社会貢献','安定して長く続けられる環境だった':'労働条件','成果が収入・評価に直結する':'評価認知','自分で仕事の進め方を決められる':'独立性','助け合えるチームワークがある':'人間関係','社会的に意味を感じられる':'社会貢献','安定した働き方（時間・休日）':'労働条件','人の成長に関わり続けられる':'社会貢献','会社の方針や文化が自分と合わないとき':'社会貢献','スピードより丁寧さを求めているのに逆のとき':'独立性','個人プレーを求められ協力しにくいとき':'人間関係','頑張りが数字に反映されないとき':'評価認知'};
 const IM={'A: データを分析して仮説を検証する':{I:2},'B: 人に寄り添い課題を一緒に解決する':{S:2},'A: ゼロから企画・表現物を作り上げる':{A:2,E:1},'B: ルールや手順に沿って正確に処理する':{C:2},'A: 人や組織を動かして大きな成果を出す':{E:2},'B: モノや仕組みを手を動かして実際に作る':{R:2},'なぜうまくいかないのか原因を調べているとき':{I:2},'人の話を聞いて一緒に考えているとき':{S:2},'新しいアイデアやコンテンツを作っているとき':{A:2},'目標に向けてチームを引っ張っているとき':{E:2},'データや数字を整理・整頓しているとき':{C:2}};
 const STM={'やることをリスト化して確実に片付ける':'実行力','困っている人に自然と声をかけてしまう':'人間関係構築力','「なぜ？」と原因・仕組みを考え続ける':'戦略的思考力','「こうすればもっと良くなる」と改善策を出してしまう':'戦略的思考力','その場の雰囲気を明るくしたり盛り上げたりしてしまう':'影響力','スケジュール・タスク管理をまとめる役':'実行力','話しやすい雰囲気をつくるサポート役':'人間関係構築力','戦略・アイデアを出す参謀役':'戦略的思考力','みんなを巻き込んで引っ張るリーダー役':'影響力','最後まできっちりやり抜くこと':'実行力','人の悩みを聞き続けること':'人間関係構築力','情報を整理・分析し続けること':'戦略的思考力','新しいことを考え続けること':'戦略的思考力','周りのモチベーションを上げ続けること':'影響力','ミスなく丁寧にこなせること':'実行力','誰とでも自然に仲良くなれること':'人間関係構築力','論理的に筋道を立てて考えられること':'戦略的思考力','人を動かしてチームをまとめられること':'影響力'};
+
+const VD={
+  達成感:{desc:'成果や成長を数字・形で実感できることを重視。目標達成の瞬間に最もモチベーションが上がり、努力が結果に直結する環境で力を発揮します。',job:'営業・PM・マーケティング・業務改善担当',good:['数字や成果物で成果が見える','目標設定と達成の繰り返しがある','成長を実感できる仕事の幅がある'],bad:['成果が見えにくいルーティン作業','評価基準が曖昧な職場','変化がなく同じ作業の繰り返し']},
+  独立性:{desc:'仕事の進め方や順番を自分で決められることを重視。細かく指示されるより任せてもらえる環境で本来の力が発揮できます。',job:'プロジェクトリーダー・フリーランス・独立系職種',good:['自分でスケジュールや進め方を決められる','裁量が広く任せてもらえる','成果で評価される環境'],bad:['細かくマイクロマネジメントされる','マニュアル通りにしか動けない','上司の承認が毎回必要']},
+  評価認知:{desc:'頑張りが正当に評価・認知されることを重視。数字や成果物として努力が見える仕事に満足感を感じやすいです。',job:'営業・エンジニア・クリエイター・職人',good:['成果が数字や形ではっきり見える','頑張りが給与・昇進に反映される','フィードバックが明確に返ってくる'],bad:['評価基準が不透明','年功序列で成果が反映されない','頑張っても報われない文化']},
+  人間関係:{desc:'困ったときに助け合える雰囲気、チームで協力できる環境を重視。人との関わりが仕事のエネルギー源になります。',job:'HR・カウンセラー・チームリーダー・CS',good:['チームワークがある','困ったとき助け合える雰囲気','プロジェクト単位でチームで動く'],bad:['完全な個人プレーの環境','人との関わりがほとんどない','ギスギスした競争文化']},
+  社会貢献:{desc:'誰かの役に立てる実感、社会的な意味を感じられることを重視。誠実に、自分が信じられる価値を提供したいという気持ちが強いです。',job:'教育・支援・医療・キャリアアドバイザー',good:['誰かの変化・成長を直接感じられる','誠実に価値を提供できる','社会的意義のある仕事'],bad:['嘘や誇張が必要な場面がある','誰の役に立っているか見えない','会社の方針に共感できない']},
+  労働条件:{desc:'安定して無理なく長く続けられる環境を重視。勤務時間・休日が安定していることで持続的に力を発揮できます。',job:'管理職・事務・ルールが整った安定職場',good:['勤務時間・休日が安定している','長期的に働き続けられる環境','無理なく続けられるペース'],bad:['残業・休日出勤が多い','体力的・精神的に無理を強いられる','雇用が不安定']}
+};
+
+const ID={
+  R:{label:'現実的（R）',desc:'モノを扱う・体を動かす・現場で進めることに興味があります。手を動かして目に見える成果を作ることにやりがいを感じます。',job:'調理・建設・製造・ロボットエンジニア・現場系',good:['道具や機械を使って目に見える成果を作る','体を動かして完了が明確にわかる'],bad:['デスクワーク中心で身体を動かさない','抽象的な議論や調整が多い']},
+  I:{label:'研究的（I）',desc:'考える・分析する・仕組みを理解することに興味があります。「なぜ？」を追求し、データや論理で答えを見つけるプロセスに没頭できます。',job:'データアナリスト・コンサルタント・エンジニア・研究職',good:['課題の原因を考え仮説を立てて検証できる','データや情報を整理し論理的に考える時間がある'],bad:['手順が完全に決まっていて考える余地がない','スピードや量だけを求められる']},
+  A:{label:'芸術的（A）',desc:'表現する・アイデアを形にすることに興味があります。自分の発想や感性を活かせる、決まった正解がない環境でワクワクします。',job:'デザイナー・コピーライター・SNS運営・ブランディング',good:['自分なりの発想や感性を活かせる','決まった正解がなく自由度が高い'],bad:['手順や型が厳密に決められている','創意工夫の余地がほとんどない']},
+  S:{label:'社会的（S）',desc:'人を支える・人と関わることに興味があります。人の成長や変化を間近で感じ、感謝が直接返ってくる仕事に充実感を覚えます。',job:'教員・保育士・キャリアカウンセラー・カスタマーサポート',good:['人の成長や変化を間近で感じられる','感謝や反応が直接返ってくる'],bad:['人との関わりがほとんどない','数字や成果だけで評価される']},
+  E:{label:'企業的（E）',desc:'人や組織を動かし、成果を出すことに興味があります。目標に向かって人・資源を動かし、評価・報酬に結びつく環境でやる気が出ます。',job:'法人営業・新規事業担当・起業家・プロデューサー',good:['目標に向かって人や資源を動かせる','意思決定や裁量の範囲が広い'],bad:['決められた手順を守るだけ','影響力や裁量がほとんどない']},
+  C:{label:'慣習的（C）',desc:'データ・ルール・正確さに興味があります。決められた手順を正確にこなし、整理された環境で安定的に仕事を進めることが得意です。',job:'経理・財務・品質管理・事務・データ管理',good:['手順が明確で正確さが求められる','データや数字を整理・管理できる'],bad:['曖昧な指示や変化が多い環境','完璧主義が邪魔をする場面']}
+};
+
+const SD={
+  実行力:{desc:'とにかくきっちりやり抜く、頼れる完遂人。やるべきことをリスト化して一つずつ片付けるのが得意で、しんどい場面でも途中で投げ出しません。「この人に任せれば大丈夫」という安心感を周囲に与えます。',job:'業務量が多くテキパキこなす必要がある仕事・締め切りが厳しくミスが許されない仕事',good:['業務量が多くテキパキこなす必要がある','締め切りが厳しくミスが許されない'],bad:['曖昧な目標でゴールが見えない','計画なしに場当たり的に動く職場']},
+  影響力:{desc:'やる気スイッチを押すムードメーカー。人を巻き込んだり、やる気にさせることが自然にできます。雰囲気を変え、誰かを説得・提案する力があります。',job:'営業・チームリーダー・プレゼンが多い職種・プロジェクト推進役',good:['人を巻き込んでチームを動かせる','説得・提案の場面が多い'],bad:['一人で黙々と作業するだけ','影響力を発揮できない環境']},
+  人間関係構築力:{desc:'チームをニコニコに保つ最高サポーター。場を和らげて話しやすい雰囲気を作るのが得意で、みんなで協力して作り上げる仕事に向いています。',job:'HR・カウンセラー・チームサポート・カスタマーサクセス',good:['チームで協力して作り上げる','長い時間をかけて問題解決する'],bad:['人との関わりがほとんどない','成果だけで評価される環境']},
+  戦略的思考力:{desc:'一歩先をじっくり見通す、チームの軍師。情報をたくさん集めて一番いい方法を考えるのが好きで、目の前のことだけでなく「次はこうなるかも」と予想します。',job:'企画・データ分析・マーケティング・コンサルタント',good:['じっくり作戦を立てデータを分析できる','どうすれば売れるかなどアイデアを出す'],bad:['すぐ手を動かせと言われる','計画に沿って進めたいのに指示が毎日変わる']}
+};
 
 const msgsEl=document.getElementById('msgs'),choicesEl=document.getElementById('choices-area'),inpEl=document.getElementById('inp'),sbtnEl=document.getElementById('sbtn');
 
@@ -140,22 +345,18 @@ function setChoices(items,multi,free){
     const btn=document.createElement('button');btn.className='cb';btn.textContent=label;
     btn.onclick=()=>{
       if(!multi){handleChoice(label);}
-      else{
-        if(sel.has(label)){sel.delete(label);btn.classList.remove('sel');}
-        else{sel.add(label);btn.classList.add('sel');}
-        updateConfirm(sel);
-      }
+      else{if(sel.has(label)){sel.delete(label);btn.classList.remove('sel');}else{sel.add(label);btn.classList.add('sel');}updateConfirm(sel);}
     };
     choicesEl.appendChild(btn);
   });
   if(free){
-    const fi=document.createElement('input');fi.id='free-inp';fi.type='text';fi.placeholder='上記以外は自由に入力...';
+    const fi=document.createElement('input');fi.type='text';fi.placeholder='上記以外は自由に入力...';
+    fi.style.cssText='font-size:12px;padding:7px 13px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#1a1a1a;width:100%;margin-top:4px;font-family:inherit';
     fi.onkeydown=e=>{if(e.key==='Enter'&&fi.value.trim()){handleChoice(fi.value.trim());fi.value=''}};
     choicesEl.appendChild(fi);
   }
   if(multi){
-    const c=document.createElement('button');c.id='mc';c.className='confirm-btn';
-    c.textContent='選択を確定する →';
+    const c=document.createElement('button');c.id='mc';c.className='confirm-btn';c.textContent='選択を確定する →';
     c.onclick=()=>{if(sel.size>0)handleChoice(Array.from(sel).join('・'))};
     choicesEl.appendChild(c);
   }
@@ -172,12 +373,8 @@ function updateSteps(){
 function handleChoice(val){addMsg(val,'usr');clearChoices();processAnswer(val)}
 function processAnswer(val){
   const s=SC.step,sub=SC.sub;
-  if(s===1){
-    val.split('・').forEach(item=>{
-      const v=VM[item.trim()];
-      if(v){if(sub===0)SC.val[v]-=2;else if(sub===1)SC.val[v]+=3;else SC.val[v]+=2;}
-    });
-  }else if(s===2){const m=IM[val];if(m)Object.entries(m).forEach(([k,v])=>SC.int[k]+=v);}
+  if(s===1){val.split('・').forEach(item=>{const v=VM[item.trim()];if(v){if(sub===0)SC.val[v]-=2;else if(sub===1)SC.val[v]+=3;else SC.val[v]+=2;}});}
+  else if(s===2){const m=IM[val];if(m)Object.entries(m).forEach(([k,v])=>SC.int[k]+=v);}
   else if(s===3){const sv=STM[val];if(sv)SC.str[sv]+=1;}
   else if(s===4){if(sub===0)SC.life.short=val;else if(sub===1)SC.life.mid=val;else if(sub===2)SC.life.long=val;else SC.life.now=val;}
   SC.sub++;
@@ -187,56 +384,114 @@ const TRANS={2:'価値観の傾向が見えてきました！\n\n次は「興味
 
 function nextQ(){
   const s=SC.step,sub=SC.sub,sf=FLOW[s];
-  if(sf&&sub<sf.length){
-    const q=sf[sub];addMsg(q.q,'ai');setChoices(q.ch,q.multi||false,q.free||false);
-  }else{
-    SC.step++;SC.sub=0;updateSteps();
-    if(SC.step<=4){addMsg(TRANS[SC.step],'ai');setTimeout(()=>{showTyping();setTimeout(()=>{rmTyping();nextQ()},500)},300);}
-    else showResult();
-  }
+  if(sf&&sub<sf.length){const q=sf[sub];addMsg(q.q,'ai');setChoices(q.ch,q.multi||false,q.free||false);}
+  else{SC.step++;SC.sub=0;updateSteps();if(SC.step<=4){addMsg(TRANS[SC.step],'ai');setTimeout(()=>{showTyping();setTimeout(()=>{rmTyping();nextQ()},500)},300);}else showResult();}
+}
+
+function makeEnvGrid(good,bad){
+  const g=document.createElement('div');g.className='env-grid';
+  const gc=document.createElement('div');gc.className='env-card env-good';
+  gc.innerHTML=`<h4>✅ 合う環境</h4><ul>${good.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  const bc=document.createElement('div');bc.className='env-card env-bad';
+  bc.innerHTML=`<h4>❌ 合わない環境</h4><ul>${bad.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  g.appendChild(gc);g.appendChild(bc);return g;
 }
 
 function showResult(){
   SC.step=5;updateSteps();
-  const topVal=Object.entries(SC.val).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]);
-  const iLbl={R:'現実的（R）',I:'研究的（I）',A:'芸術的（A）',S:'社会的（S）',E:'企業的（E）',C:'慣習的（C）'};
-  const topInt=Object.entries(SC.int).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>iLbl[e[0]]);
-  const topStr=Object.entries(SC.str).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
-  const envMap={達成感:'成果・数字が見える仕事（営業・PM・マーケ）',独立性:'裁量が大きく自分で動ける環境',評価認知:'成果が評価に直結する仕事',人間関係:'チーム・協働中心の仕事',社会貢献:'誰かを支える仕事（教育・支援）',労働条件:'安定・長期継続できる環境'};
-  const strDesc={実行力:'やり抜く力・完遂力',影響力:'人を動かすムードメーカー',人間関係構築力:'場をつくるサポーター',戦略的思考力:'先を読む参謀型'};
+  document.getElementById('chat-wrap').style.display='none';
+  document.getElementById('result-page').style.display='block';
+  window.scrollTo(0,0);
 
-  addMsg('診断が完了しました！\n結果をまとめます。','ai');
-  setTimeout(()=>{
-    const w=document.createElement('div');w.className='msg ai';w.style.maxWidth='96%';
-    const av=document.createElement('div');av.className='av';av.textContent='AI';
-    const card=document.createElement('div');card.className='rc';
-    card.innerHTML=`
-      <h3>🎯 キャリア診断 結果サマリー</h3>
-      <div class="sec">
-        <div class="sl">① 大切にしている価値観（TOP3）</div>
-        ${topVal.map(v=>`<span class="tag tb">${v}</span>`).join('')}
-        <div style="font-size:12px;color:#888;margin-top:6px">→ ${envMap[topVal[0]]||''}</div>
-      </div>
-      <div class="sec">
-        <div class="sl">② 仕事への興味タイプ</div>
-        ${topInt.map(v=>`<span class="tag ta">${v}</span>`).join('')}
-      </div>
-      <div class="sec">
-        <div class="sl">③ あなたの強み</div>
-        ${topStr.map(v=>`<span class="tag tg">${v}：${strDesc[v]||''}</span>`).join('　')}
-      </div>
-      <div class="sec">
-        <div class="sl">④ 理想の生活ロードマップ</div>
-        <div style="font-size:12px;line-height:2;color:#333">
-          <span style="color:#aaa">短期：</span>${SC.life.short||'—'}<br>
-          <span style="color:#aaa">中期：</span>${SC.life.mid||'—'}<br>
-          <span style="color:#aaa">長期：</span>${SC.life.long||'—'}
-        </div>
-      </div>
-      <button class="restart-btn" onclick="location.reload()">🔄 もう一度診断する</button>
-    `;
-    w.appendChild(av);w.appendChild(card);msgsEl.appendChild(w);scroll();
-  },700);
+  const topVal=Object.entries(SC.val).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]);
+  const allInt=Object.entries(SC.int).sort((a,b)=>b[1]-a[1]);
+  const topInt=allInt.slice(0,2).map(e=>e[0]);
+  const topStr=Object.entries(SC.str).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
+
+  // ヒーローバッジ
+  const hb=document.getElementById('hero-badges');
+  topVal.slice(0,2).forEach(v=>{const b=document.createElement('span');b.className='hero-badge hb-purple';b.textContent=v;hb.appendChild(b)});
+  topInt.slice(0,1).forEach(k=>{const b=document.createElement('span');b.className='hero-badge hb-amber';b.textContent=ID[k]?ID[k].label:k;hb.appendChild(b)});
+  topStr.slice(0,1).forEach(s=>{const b=document.createElement('span');b.className='hero-badge hb-green';b.textContent=s;hb.appendChild(b)});
+
+  // 総合所見
+  const v0=topVal[0],v1=topVal[1],s0=topStr[0],i0=topInt[0];
+  const soken=`あなたは「${v0}」と「${v1}」を核心的な価値観として持ち、${VD[v0]?VD[v0].desc:''} 興味タイプは「${ID[i0]?ID[i0].label:i0}」が最も高く、${ID[i0]?ID[i0].desc:''} 強みは「${s0}」— ${SD[s0]?SD[s0].desc:''} この3つを重ね合わせると、${VD[v0]?VD[v0].job:''}の方向性が最もフィットしやすいと考えられます。価値観・興味・強みの3つが重なる環境を選ぶことで、満足度・成長速度・パフォーマンスが最大化されます。`;
+  document.getElementById('soken-text').textContent=soken;
+
+  // ① 価値観
+  const vt=document.getElementById('val-tags');
+  topVal.forEach(v=>{const t=document.createElement('span');t.className='tag t-purple';t.textContent=v;vt.appendChild(t)});
+  document.getElementById('val-main').textContent=`あなたが最も大切にしている価値観はこの3つです。これらが満たされない環境では、どれだけ条件が良くても長続きしにくくなります。転職・就職時の「ゆずれない軸」として使ってください。`;
+  const vi=document.getElementById('val-items');
+  topVal.forEach(v=>{
+    if(VD[v]){
+      const b=document.createElement('div');b.className='desc-box';b.style.marginBottom='10px';
+      b.innerHTML=`<div class="desc-title">🔹 ${v}</div>${VD[v].desc}<div class="desc-job">${VD[v].job}</div>`;
+      vi.appendChild(b);
+    }
+  });
+  const ve=document.getElementById('val-env');
+  if(VD[topVal[0]]){ve.appendChild(makeEnvGrid(VD[topVal[0]].good,VD[topVal[0]].bad))}
+  document.getElementById('val-warn').textContent=`${topVal.join('・')}が満たされない環境は、条件が良くても消耗しやすくなります。面接で「この環境で${topVal[0]}を感じられるか」を必ず確認してください。`;
+
+  // ② 興味
+  const ir=document.getElementById('int-ranks');
+  const mc=['m1','m2','m3','m-other','m-other','m-other'],mn=['🥇','🥈','🥉','4','5','6'];
+  allInt.forEach(([k,v],i)=>{
+    const row=document.createElement('div');row.className='rank-row';
+    const info=ID[k];
+    row.innerHTML=`<div class="rank-medal ${mc[i]}">${mn[i]}</div><div class="rank-info"><div class="rank-label">${info?info.label:k}</div><div class="rank-desc">${info?info.job:''}</div></div><div class="rank-pt">${v}pt</div>`;
+    ir.appendChild(row);
+  });
+  const im=document.getElementById('int-main');
+  im.innerHTML=`<div class="desc-title">🔹 ${ID[topInt[0]]?ID[topInt[0]].label:topInt[0]}</div>${ID[topInt[0]]?ID[topInt[0]].desc:''}<div class="desc-job">${ID[topInt[0]]?ID[topInt[0]].job:''}</div>`;
+  const ie=document.getElementById('int-env');
+  if(ID[topInt[0]]){ie.appendChild(makeEnvGrid(ID[topInt[0]].good,ID[topInt[0]].bad))}
+
+  // ③ 強み
+  const st=document.getElementById('str-tags');
+  topStr.forEach(s=>{const t=document.createElement('span');t.className='tag t-green';t.textContent=s;st.appendChild(t)});
+  const si=document.getElementById('str-items');
+  topStr.forEach(s=>{
+    if(SD[s]){
+      const b=document.createElement('div');b.className='desc-box';b.style.marginBottom='10px';
+      b.innerHTML=`<div class="desc-title">🔹 ${s}</div>${SD[s].desc}<div class="desc-job">${SD[s].job}</div>`;
+      si.appendChild(b);
+    }
+  });
+  const se=document.getElementById('str-env');
+  if(SD[topStr[0]]){se.appendChild(makeEnvGrid(SD[topStr[0]].good,SD[topStr[0]].bad))}
+
+  // ④ 理想の生活
+  const tl=document.getElementById('life-tl');
+  const items=[{p:'現在',v:SC.life.now,dot:'now'},{p:'短期（1〜2年後）',v:SC.life.short,dot:''},{p:'中期（3〜5年後）',v:SC.life.mid,dot:''},{p:'長期（5年以上先）',v:SC.life.long,dot:''}];
+  items.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='tl-item';
+    const last=i===items.length-1;
+    div.innerHTML=`<div class="tl-left"><div class="tl-dot ${item.dot}"></div>${!last?'<div class="tl-line"></div>':''}</div><div class="tl-content" style="padding-bottom:${last?'0':'20px'}"><div class="tl-period">${item.p}</div><div class="tl-text">${item.v||'—'}</div></div>`;
+    tl.appendChild(div);
+  });
+
+  // アクション
+  const actions=[
+    `【環境の確認】今の職場で「${v0}」と「${topStr[0]}」が活かせているか棚卸しする`,
+    `【興味の深掘り】「${ID[i0]?ID[i0].label:i0}」タイプとして、どんなスキルを伸ばせるか具体化する`,
+    `【副業・発信の検討】理想の生活に向けて、今の仕事外で収入の柱をつくる第一歩を踏み出す`,
+    `【転職軸の言語化】「${topVal.join('・')}」が満たされる求人かどうかを判断基準にして情報収集を始める`
+  ];
+  const ai=document.getElementById('action-items');
+  actions.forEach((a,i)=>{
+    const div=document.createElement('div');div.className='action-item';
+    div.innerHTML=`<div class="action-num">${i+1}</div><div class="action-text">${a}</div>`;
+    ai.appendChild(div);
+  });
+}
+
+function downloadPDF(){
+  const el=document.getElementById('result-content');
+  const opt={margin:[10,10,10,10],filename:'キャリア診断結果_carise.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
+  html2pdf().set(opt).from(el).save();
 }
 
 inpEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&inpEl.value.trim()){handleChoice(inpEl.value.trim());inpEl.value=''}});
