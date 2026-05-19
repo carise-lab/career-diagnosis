@@ -42,6 +42,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 .confirm-btn-off{font-size:14px;padding:12px 18px;border-radius:12px;border:2px solid #e5e7eb;background:#f9fafb;color:#d1d5db;cursor:not-allowed;width:100%;text-align:center;margin-top:8px;font-family:inherit;font-weight:600;}
 .confirm-btn-on{font-size:15px;padding:14px 18px;border-radius:12px;border:none;background:#111827;color:#fff;cursor:pointer;width:100%;text-align:center;margin-top:8px;font-family:inherit;font-weight:800;}
 .confirm-btn-on:hover{background:#1f2937;}
+.back-btn{font-size:13px;color:#b0b7c3;background:none;border:none;cursor:pointer;padding:10px 2px 2px;text-align:left;font-family:inherit;font-weight:600;width:100%;letter-spacing:.2px;}
+.back-btn:hover{color:#6b7280;}
 .sel-counter{font-size:13px;font-weight:700;color:#d1d5db;text-align:right;padding:0 2px 6px;}
 #input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid #f0f0ee}
 #inp{flex:1;font-size:14px;padding:10px 14px;border-radius:10px;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-family:inherit;font-weight:500}
@@ -212,6 +214,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 /* ============================================================
    状態管理
    ============================================================ */
+const HISTORY=[]; /* スナップショット履歴。セクション内でのみ有効 */
 const SC={step:1,sub:0,
   val:{達成感:0,独立性:0,評価認知:0,人間関係:0,社会貢献:0,労働条件:0},
   int:{R:0,I:0,A:0,S:0,E:0,C:0},
@@ -631,6 +634,13 @@ function setChoices(q){
       choicesEl.appendChild(fi);
     }
   }
+  /* 戻るボタン：セクション内の2問目以降のみ表示 */
+  if(HISTORY.length>0){
+    const bb=document.createElement('button');bb.className='back-btn';
+    bb.innerHTML='← 前の問に戻る&nbsp;<span style="font-size:11px;color:#d1d5db;">（セクション内のみ）</span>';
+    bb.onclick=goBack;
+    choicesEl.appendChild(bb);
+  }
 }
 
 function updateSteps(){
@@ -640,7 +650,17 @@ function updateSteps(){
     else if(i+1===SC.step)el.classList.add('active');
   });
 }
-function handleChoice(val){addMsg(val,'usr');clearChoices();processAnswer(val)}
+function handleChoice(val){
+  /* 回答前にスコア全体をコピー保存（スナップショット方式） */
+  HISTORY.push({
+    sc:JSON.parse(JSON.stringify({
+      val:{...SC.val},int:{...SC.int},str:{...SC.str},
+      life:{...SC.life},step:SC.step,sub:SC.sub
+    })),
+    q: FLOW[SC.step] ? FLOW[SC.step][SC.sub] : null
+  });
+  addMsg(val,'usr');clearChoices();processAnswer(val);
+}
 
 function processAnswer(val){
   const s=SC.step,sub=SC.sub;
@@ -667,6 +687,32 @@ function processAnswer(val){
   setTimeout(()=>{showTyping();setTimeout(()=>{rmTyping();nextQ()},750)},200);
 }
 
+/* 戻る処理：スナップショットから完全復元 */
+function goBack(){
+  if(HISTORY.length===0)return;
+  rmTyping();clearChoices();
+  const prev=HISTORY.pop();
+
+  /* スコアを回答前の状態に完全復元 */
+  SC.val={...prev.sc.val};
+  SC.int={...prev.sc.int};
+  SC.str={...prev.sc.str};
+  SC.life={...prev.sc.life};
+  SC.step=prev.sc.step;
+  SC.sub=prev.sc.sub;
+  updateSteps();
+
+  /* UIから最後のユーザー発言と現在の設問バブルを削除 */
+  const ubs=msgsEl.querySelectorAll('.msg.usr');
+  if(ubs.length)ubs[ubs.length-1].remove();
+  const abs=msgsEl.querySelectorAll('.msg.ai');
+  if(abs.length)abs[abs.length-1].remove();
+
+  /* 設問バブルはチャットに残っているので選択肢のみ再表示 */
+  if(prev.q){setChoices(prev.q);}
+  scroll();
+}
+
 const TRANS={
   2:'価値観の傾向が見えてきました！\n\n次は「興味」です。同じ条件の仕事でも、興味に合うかどうかで満足度と成長速度が大きく変わります。',
   3:'興味タイプが分かってきました！\n\n次は「強み」です。強みとは「努力しなくても自然にやってしまうこと」— スキルや資格とは違います。',
@@ -679,6 +725,7 @@ function nextQ(){
     const q=sf[sub];addMsg(q.q,'ai');setChoices(q);
   } else {
     SC.step++;SC.sub=0;updateSteps();
+    HISTORY.length=0; /* セクションをまたいだ戻りは不可：HISTORYリセット */
     if(SC.step<=4){
       addMsg(TRANS[SC.step],'ai');
       setTimeout(()=>{showTyping();setTimeout(()=>{rmTyping();nextQ()},500)},300);
