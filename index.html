@@ -39,6 +39,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 .cb-multi.sel{background:#ede9fe;color:#3730a3;border-color:#8b5cf6}
 .confirm-btn{font-size:14px;padding:12px 18px;border-radius:12px;border:2px solid #6ee7b7;background:#ecfdf5;color:#065f46;cursor:pointer;width:100%;text-align:center;margin-top:4px;font-family:inherit;font-weight:700}
 .confirm-btn:hover{background:#d1fae5}
+.confirm-btn-off{font-size:14px;padding:12px 18px;border-radius:12px;border:2px solid #e5e7eb;background:#f9fafb;color:#d1d5db;cursor:not-allowed;width:100%;text-align:center;margin-top:8px;font-family:inherit;font-weight:600;}
+.confirm-btn-on{font-size:15px;padding:14px 18px;border-radius:12px;border:none;background:#111827;color:#fff;cursor:pointer;width:100%;text-align:center;margin-top:8px;font-family:inherit;font-weight:800;}
+.confirm-btn-on:hover{background:#1f2937;}
+.sel-counter{font-size:13px;font-weight:700;color:#d1d5db;text-align:right;padding:0 2px 6px;}
 #input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid #f0f0ee}
 #inp{flex:1;font-size:14px;padding:10px 14px;border-radius:10px;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-family:inherit;font-weight:500}
 #inp:focus{outline:none;border-color:#a5b4fc}
@@ -227,7 +231,7 @@ const FLOW={
   /* ───────── ① 価値観 ───────── */
   1:[
     /* Q1: 達成感 vs 人間関係 ［ネガ：つらい状況］ */
-    {q:'【価値観 1/8】\n\nどちらの状況が「もっとつらい」と感じますか？\n\n▼ 特にあてはまるものを1つだけ選んでください',
+    {q:'【価値観 1/8】\n\nどちらの状況が「最もつらい」と感じますか？\n\n▼ 特にあてはまるものを1つだけ選んでください',
      hint:'特にあてはまるものを1つだけ選んでください',pair:true,
      ch:['A: 頑張っても成果が出ず、成長を感じられない日々',
          'B: 一人でこなすことを求められ、チームで動けない職場']},
@@ -239,8 +243,8 @@ const FLOW={
     /* Q3: 社会貢献 vs 労働条件 ［ポジ：満たされたいこと］ */
     {q:'【価値観 3/8】\n\n仕事を通じて一番「満たされたい」のはどちらですか？\n\n▼ 特にあてはまるものを1つだけ選んでください',
      hint:'特にあてはまるものを1つだけ選んでください',pair:true,
-     ch:['A: 誰かの人生や成長に直接関わって役に立てること',
-         'B: 安定した働き方で、無理なく長く続けられること']},
+     ch:['A: 誰かの人生や成長に関わって役に立てること（たとえ大変な場面があっても）',
+         'B: 安定した働き方で無理なく長く続けられること（たとえやりがいが薄くても）']},
     /* Q4: 社会貢献 vs 達成感 ［ネガ：合わない場面］ */
     {q:'【価値観 4/8】\n\n仕事で「合わないな」と強く感じるのはどちらですか？\n\n▼ 特にあてはまるものを1つだけ選んでください',
      hint:'特にあてはまるものを1つだけ選んでください',pair:true,
@@ -321,8 +325,8 @@ const FLOW={
     /* Q9: S vs C */
     {q:'【興味 9/10】\n\n「自分に向いている仕事スタイル」はどちらですか？\n\n▼ 特にあてはまるものを1つだけ選んでください',
      hint:'特にあてはまるものを1つだけ選んでください',pair:true,
-     ch:['A: 人と対話しながら、相手のペースに合わせて進めるスタイル',
-         'B: 決まった手順やルールに従い、正確・効率よく進めるスタイル']},
+     ch:['A: 相手の状況や気持ちに合わせて、柔軟に対応しながら進めるスタイル',
+         'B: 決まったルールや手順に従って、正確・着実にこなすスタイル']},
     /* Q10: E vs C */
     {q:'【興味 10/10】\n\nもし自由に仕事を選べるとしたら、どちらが近いですか？\n\n▼ 特にあてはまるものを1つだけ選んでください',
      hint:'特にあてはまるものを1つだけ選んでください',pair:true,
@@ -387,21 +391,27 @@ const FLOW={
          'スキルを磨いてキャリアアップしたい',
          'もっと自分の時間や裁量がほしい',
          '副業や複数収入源を持ちたい',
-         '転職して新しい環境に移りたい']},
+         '転職して新しい環境に移りたい',
+         '今の職場で昇格・ポジションアップを目指したい',
+         '専門性を高めて「この分野といえばこの人」になりたい']},
     {q:'【理想の生活 2/4】\n\n中期（3〜5年後）はどんな生活をイメージしていますか？\n\n▼ 最もあてはまるものを1つ選ぶか、自由に入力してください',
      hint:'1つ選ぶか、自由に入力もできます',pair:false,free:true,
      ch:['マネジメントやリーダーポジションに就く',
          '専門家として独立・フリーに近い形で働く',
          '副業が軌道に乗り収入の柱を増やす',
          'ライフイベントと両立できる環境をつくる',
-         '起業・事業を立ち上げる']},
+         '起業・事業を立ち上げる',
+         '年収を現在の1.5〜2倍に引き上げたい',
+         '人の成長やキャリアに関わり続ける仕事をしたい']},
     {q:'【理想の生活 3/4】\n\n長期（5年以上先）の理想は？\n\n▼ 最もあてはまるものを1つ選ぶか、自由に入力してください',
      hint:'1つ選ぶか、自由に入力もできます',pair:false,free:true,
      ch:['年収800万〜1000万を実現したい',
          '場所や時間を選ばず働けるようにしたい',
          '自分のブランドや事業を持ちたい',
          '仕事とプライベートのバランスを最優先にしたい',
-         '社会への影響力を持つポジションに就きたい']},
+         '社会への影響力を持つポジションに就きたい',
+         '誰かのロールモデルになれる生き方をしたい',
+         '好きなことや得意なことで、自由に働きたい']},
     {q:'【理想の生活 4/4】\n\n今の状況を一言で表すと？\n\n▼ 特にあてはまるものを1つだけ選んでください',
      hint:'特にあてはまるものを1つだけ選んでください',pair:false,
      ch:['仕事は安定しているが成長実感がない',
@@ -426,8 +436,8 @@ const VM_MAP={
   'A: やり方・進め方を自分で決められる職場（たとえ評価基準が多少曖昧でも）':['独立性',3],
   'B: 成果が給与・昇格にきちんと返ってくる職場（たとえある程度やり方が決まっていても）':['評価認知',3],
   /* Q3: 社会貢献 vs 労働条件 */
-  'A: 誰かの人生や成長に直接関わって役に立てること':['社会貢献',3],
-  'B: 安定した働き方で、無理なく長く続けられること':['労働条件',3],
+  'A: 誰かの人生や成長に関わって役に立てること（たとえ大変な場面があっても）':['社会貢献',3],
+  'B: 安定した働き方で無理なく長く続けられること（たとえやりがいが薄くても）':['労働条件',3],
   /* Q4: 社会貢献 vs 達成感 */
   'A: 誠実に働けない、信じられない商品やサービスを扱う場面':['社会貢献',2],
   'B: 毎日同じルーティンで、成長や変化を感じられない仕事':['達成感',2],
@@ -475,8 +485,8 @@ const IM={
   'A: 何かを組み立てたり、手を動かして作ったりすること':{R:2},
   'B: 気になることを調べ続けて、仕組みを理解しようとすること':{I:2},
   /* Q9: S vs C */
-  'A: 人と対話しながら、相手のペースに合わせて進めるスタイル':{S:2},
-  'B: 決まった手順やルールに従い、正確・効率よく進めるスタイル':{C:2},
+  'A: 相手の状況や気持ちに合わせて、柔軟に対応しながら進めるスタイル':{S:2},
+  'B: 決まったルールや手順に従って、正確・着実にこなすスタイル':{C:2},
   /* Q10: E vs C */
   'A: 企画・マーケ・営業など「動かす仕事」':{E:2},
   'B: 事務・管理・経理など「整える仕事」':{C:2}
@@ -585,17 +595,26 @@ function setChoices(q){
   } else if(q.multi){
     /* 複数選択（区切りは '|||'）*/
     const sel=new Set();const maxSel=q.maxSel||99;
+    const ctr=document.createElement('div');ctr.id='sel-ctr';ctr.className='sel-counter';
+    ctr.textContent=`0 / ${maxSel} 選択中`;
+    choicesEl.appendChild(ctr);
     q.ch.forEach(label=>{
       const btn=document.createElement('button');btn.className='cb-multi';btn.textContent=label;
       btn.onclick=()=>{
         if(sel.has(label)){sel.delete(label);btn.classList.remove('sel');}
         else if(sel.size<maxSel){sel.add(label);btn.classList.add('sel');}
+        const ctrEl=document.getElementById('sel-ctr');
         const c=document.getElementById('mc');
-        if(c)c.textContent=sel.size>0?`${Array.from(sel).join('、')} を確定 →`:'選択を確定する →';
+        if(ctrEl){ctrEl.textContent=`${sel.size} / ${maxSel} 選択中`;ctrEl.style.color=sel.size>0?'#8b5cf6':'#d1d5db';}
+        if(c){
+          if(sel.size>0){c.textContent=`✓ ${sel.size}件を確定して次へ →`;c.className='confirm-btn-on';}
+          else{c.textContent='選択してから確定してください';c.className='confirm-btn-off';}
+        }
       };
       choicesEl.appendChild(btn);
     });
-    const c=document.createElement('button');c.id='mc';c.className='confirm-btn';c.textContent='選択を確定する →';
+    const c=document.createElement('button');c.id='mc';c.className='confirm-btn-off';
+    c.textContent='選択してから確定してください';
     c.onclick=()=>{if(sel.size>0)handleChoice(Array.from(sel).join('|||'))};
     choicesEl.appendChild(c);
   } else {
