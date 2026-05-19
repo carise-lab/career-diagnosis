@@ -789,20 +789,42 @@ function showResult(){
     div.innerHTML=`<div class="action-num">${i+1}</div><div class="action-text">${a}</div>`;
     ai.appendChild(div);
   });
+  /* スマホはボタン文言を変更 */
+  if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
+    const pb=document.querySelector('.btn-pdf');
+    if(pb)pb.textContent='📄 PDFで保存する方法を見る';
+  }
 }
 
 function downloadPDF(){
-  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if(isMobile){
-    window.print();
-  } else {
-    html2pdf().set({
-      margin:[10,10,10,10],filename:'キャリア診断結果_carise.pdf',
-      image:{type:'jpeg',quality:0.98},
-      html2canvas:{scale:2,useCORS:true},
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-    }).from(document.getElementById('result-content')).save();
+  if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
+    showMobilePDFGuide();return;
   }
+  html2pdf().set({
+    margin:[10,10,10,10],filename:'キャリア診断結果_carise.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(document.getElementById('result-content')).save();
+}
+
+/* スマホ向け：PDF保存手順モーダル */
+function showMobilePDFGuide(){
+  const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const device=isIOS?'iPhone / iPad':'Android';
+  const steps=isIOS
+    ?'<b>① 下の「印刷する」をタップ</b><br>② プレビュー画面で2本指でピンチアウト<br>③ 左上の共有ボタン →「ファイルに保存」を選択'
+    :'<b>① 下の「印刷する」をタップ</b><br>② 送信先を「PDFとして保存」に変更<br>③「保存」をタップ';
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-end;';
+  ov.innerHTML=`<div style="background:#fff;width:100%;padding:28px 22px 48px;border-radius:20px 20px 0 0;font-family:-apple-system,sans-serif;">
+    <div style="font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:8px;">📄 PDFで保存する（${device}）</div>
+    <div style="font-size:14px;color:#6b7280;line-height:2.1;margin-bottom:22px;">${steps}</div>
+    <button onclick="window.print()" style="width:100%;padding:16px;background:#111827;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;">🖨️ 印刷する（PDF保存）</button>
+    <button onclick="this.closest('div[style*=fixed]').remove()" style="width:100%;padding:14px;background:#f3f4f6;color:#374151;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">閉じる</button>
+  </div>`;
+  ov.onclick=e=>{if(e.target===ov)ov.remove()};
+  document.body.appendChild(ov);
 }
 
 inpEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&inpEl.value.trim()){handleChoice(inpEl.value.trim());inpEl.value=''}});
