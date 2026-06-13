@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>キャリア診断ツール | carise</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;background:#f4f4f2;min-height:100vh;padding:20px 16px}
@@ -128,7 +128,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 .btn-restart:hover{background:#f9f9f7}
 .footer-note{font-size:12px;color:#bbb;text-align:center;padding:12px 0 4px;font-weight:500}
 @media(max-width:500px){.env-grid{grid-template-columns:1fr}.btn-row{flex-direction:column}}
-@media print{#chat-wrap{display:none!important}#result-page{display:block!important}.btn-row,.footer-note{display:none!important}body{background:#fff;padding:0}.r-hero{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.soken-card{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.action-box{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{#chat-wrap{display:none!important}#result-page{display:block!important;max-width:none;width:100%}.btn-row,.footer-note{display:none!important}body{background:#fff;padding:0}.r-hero{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.soken-card{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.action-box{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.r-hero,.soken-card,.r-card-header,.desc-main,.desc-box,.env-card,.rank-row,.tl-item,.action-item,.warn-strip{break-inside:avoid;page-break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -203,7 +203,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
       <div class="action-box"><h4>🚀 今すぐ取り組むべきこと</h4><div id="action-items"></div></div>
     </div>
     <div class="btn-row">
-      <button class="btn-pdf" onclick="downloadPDF()">📄 PDFでダウンロード</button>
+      <button class="btn-pdf" onclick="downloadPDF()">📄 PDFで保存する</button>
       <button class="btn-restart" onclick="location.reload()">🔄 もう一度診断する</button>
     </div>
     <div class="footer-note">carise キャリア診断ツール　|　キャリアアドバイザーが設計</div>
@@ -847,12 +847,8 @@ function downloadPDF(){
   if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
     showMobilePDFGuide();return;
   }
-  html2pdf().set({
-    margin:[10,10,10,10],filename:'キャリア診断結果_carise.pdf',
-    image:{type:'jpeg',quality:0.98},
-    html2canvas:{scale:2,useCORS:true},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  }).from(document.getElementById('result-content')).save();
+  /* PCはブラウザの印刷ダイアログ→「PDFとして保存」。@media print で結果のみ綺麗に出力 */
+  window.print();
 }
 
 /* スマホ向け：PDF保存手順モーダル */
