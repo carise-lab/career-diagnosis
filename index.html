@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>キャリア診断ツール | carise</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -129,6 +130,66 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 .footer-note{font-size:12px;color:#bbb;text-align:center;padding:12px 0 4px;font-weight:500}
 @media(max-width:500px){.env-grid{grid-template-columns:1fr}.btn-row{flex-direction:column}}
 @media print{#chat-wrap{display:none!important}#result-page{display:block!important;max-width:none;width:100%}.btn-row,.footer-note{display:none!important}body{background:#fff;padding:0}.r-hero{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.soken-card{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.action-box{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.r-hero,.soken-card,.r-card-header,.desc-main,.desc-box,.env-card,.rank-row,.tl-item,.action-item,.warn-strip{break-inside:avoid;page-break-inside:avoid}}
+
+/* ===== インフォグラフィック結果 ===== */
+#result-content{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:#faf8f3;padding:18px;border-radius:22px;border:1px solid #ece9e1}
+.span2{grid-column:1 / -1}
+.ig-card{background:#fff;border:1px solid #eceae3;border-radius:16px;padding:18px}
+.ig-sec{display:inline-block;font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:4px}
+.ig-sec-purple{background:#ede9fe;color:#5b21b6}.ig-sec-green{background:#dcfce7;color:#047857}.ig-sec-amber{background:#fef3c7;color:#b45309}.ig-sec-pink{background:#fce7f3;color:#be185d}.ig-sec-blue{background:#dbeafe;color:#1d4ed8}.ig-sec-gray{background:#f1f0ec;color:#4b5563}
+.ig-sub{font-size:12px;color:#9b968c;margin:8px 0 12px;font-weight:600}
+.ig-head{background:#111827;border-radius:18px;padding:26px 24px;color:#fff;text-align:center}
+.ig-head-badge{display:inline-block;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.12);color:#cbd5e1;margin-bottom:14px}
+.ig-head-sub{font-size:12px;color:#94a3b8;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.ig-head-title{font-size:23px;font-weight:800;line-height:1.5;color:#fff}
+.ig-head-theme{font-size:14px;color:#cbd5e1;line-height:1.85;font-weight:500;margin-top:12px}
+.ig-badges{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px}
+.hero-badge{font-size:12px;padding:5px 13px;border-radius:20px;font-weight:700}
+.hb-purple{background:rgba(167,139,250,.25);color:#ddd6fe}.hb-green{background:rgba(52,211,153,.22);color:#a7f3d0}.hb-amber{background:rgba(251,191,36,.22);color:#fde68a}
+.ig-sum-text{font-size:13.5px;color:#333;line-height:1.95;font-weight:500}
+.ig-vlist{display:flex;flex-direction:column;gap:10px}
+.ig-vitem{background:#f7f5ff;border:1px solid #e9e3ff;border-radius:12px;padding:11px 14px}
+.ig-vitem .n{font-size:14px;font-weight:800;color:#5b21b6;margin-bottom:4px}
+.ig-vitem .d{font-size:12.5px;color:#555;line-height:1.7;font-weight:500}
+.ig-bars{display:flex;flex-direction:column;gap:9px}
+.ig-bar{display:flex;align-items:center;gap:10px}
+.ig-bar .lab{flex:0 0 92px;font-size:12px;font-weight:700;color:#374151;text-align:right;line-height:1.3}
+.ig-bar .track{flex:1;height:18px;background:#f1f0ec;border-radius:9px;overflow:hidden}
+.ig-bar .fill{height:100%;border-radius:9px}
+.ig-bar .pt{flex:0 0 38px;font-size:11px;font-weight:700;color:#9ca3af;text-align:right}
+.fill-amber{background:#fcd34d}.fill-amber.top{background:#f59e0b}.fill-green{background:#6ee7b7}.fill-green.top{background:#10b981}
+.ig-note{font-size:12.5px;color:#555;line-height:1.8;font-weight:500;margin-top:12px;background:#faf9f6;border-radius:10px;padding:11px 13px}
+.ig-note b{color:#1a1a1a}
+.ig-tl{display:flex;flex-direction:column}
+.ig-tlitem{display:flex;gap:12px}
+.ig-tldot{display:flex;flex-direction:column;align-items:center}
+.ig-tldot .c{width:11px;height:11px;border-radius:50%;background:#db2777;margin-top:4px;flex-shrink:0}
+.ig-tldot .c.dim{background:#f9a8d4}
+.ig-tldot .l{width:2px;flex:1;background:#f6d6e6;margin:3px 0}
+.ig-tlbody{padding-bottom:16px;flex:1}
+.ig-tlitem:last-child .ig-tlbody{padding-bottom:0}
+.ig-tlp{font-size:11px;font-weight:800;color:#db2777;letter-spacing:.4px;margin-bottom:3px}
+.ig-tlt{font-size:13.5px;color:#1a1a1a;line-height:1.65;font-weight:600}
+.ig-acts{display:flex;flex-direction:column;gap:9px}
+.ig-act{display:flex;gap:9px;align-items:flex-start}
+.ig-act .num{flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#2563eb;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ig-act .t{font-size:13px;color:#374151;line-height:1.65;font-weight:600}
+.ig-oneline{background:#111827;border-radius:18px;padding:24px 22px;color:#fff;text-align:center}
+.ig-oneline .lab{font-size:12px;color:#fbbf24;font-weight:800;letter-spacing:1px;margin-bottom:10px}
+.ig-oneline .txt{font-size:15px;line-height:1.95;font-weight:600;white-space:pre-wrap}
+.btn-pdf2{background:#374151}.btn-pdf2:hover{background:#1f2937}
+@media(max-width:640px){#result-content{grid-template-columns:1fr;padding:14px}.ig-head-title{font-size:20px}}
+@media print{
+ #chat-wrap{display:none!important}
+ #result-page{display:block!important;max-width:none;width:100%}
+ #result-content{display:block!important;background:#fff!important;padding:0!important;border:none!important}
+ .span2,.ig-card{margin-bottom:12px}
+ .btn-row{display:none!important}
+ .footer-note{display:block!important}
+ body{background:#fff;padding:0}
+ .ig-head,.ig-oneline,.ig-sec,.ig-sec-purple,.ig-sec-green,.ig-sec-amber,.ig-sec-pink,.ig-sec-blue,.ig-sec-gray,.fill-amber,.fill-green,.ig-act .num,.ig-tldot .c,.hero-badge,.env-good,.env-bad{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .ig-card,.ig-head,.ig-oneline,.ig-vitem,.env-card,.ig-tlitem,.ig-act,.ig-bar{break-inside:avoid;page-break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -159,54 +220,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 
 <div id="result-page">
   <div id="result-content">
-    <div class="r-hero">
-      <h2>🎯 キャリア診断 結果レポート</h2>
-      <p>価値観・興味・強み・理想の生活をもとに、あなたのキャリア軸を分析しました</p>
-      <div class="badge-row" id="hero-badges"></div>
+    <div class="ig-head span2">
+      <div class="ig-head-badge">carise キャリア診断 結果</div>
+      <div class="ig-head-sub">あなたのキャリアタイプ</div>
+      <h2 class="ig-head-title" id="ig-title"></h2>
+      <p class="ig-head-theme" id="ig-theme"></p>
+      <div class="ig-badges" id="hero-badges"></div>
     </div>
-    <div class="soken-card"><h3>📋 TOTAL SUMMARY</h3><p id="soken-text"></p></div>
-    <div class="r-card">
-      <div class="r-card-header">
-        <div class="r-num rn-purple">①</div>
-        <div><div class="r-card-title">価値観 — 仕事に何を求めるか</div><div class="r-card-sub">O*NET Work Values（厚生労働省も使用）</div></div>
-      </div>
-      <div class="tag-row" id="val-tags"></div>
-      <div class="desc-main" id="val-main"></div>
-      <div id="val-items"></div>
-      <div id="val-env"></div>
-      <div class="warn-strip" id="val-warn"></div>
+    <div class="ig-card span2">
+      <div class="ig-sec ig-sec-gray">📋 総合サマリー</div>
+      <p class="ig-sum-text" id="soken-text"></p>
     </div>
-    <div class="r-card">
-      <div class="r-card-header">
-        <div class="r-num rn-orange">②</div>
-        <div><div class="r-card-title">興味タイプ — 何に没頭できるか</div><div class="r-card-sub">RIASEC（厚生労働省も使用）</div></div>
-      </div>
-      <div class="rank-list" id="int-ranks"></div>
-      <div class="desc-box" style="margin-top:14px" id="int-main"></div>
-      <div id="int-env"></div>
+    <div class="ig-card">
+      <div class="ig-sec ig-sec-purple">💎 大切にする価値観 TOP3</div>
+      <div class="ig-sub">O*NET Work Values（厚労省も使用）</div>
+      <div class="ig-vlist" id="val-list"></div>
     </div>
-    <div class="r-card">
-      <div class="r-card-header">
-        <div class="r-num rn-green">③</div>
-        <div><div class="r-card-title">強み — 自然にやってしまうこと</div><div class="r-card-sub">ストレングスファインダー（Gallup）準拠</div></div>
-      </div>
-      <div class="tag-row" id="str-tags"></div>
-      <div id="str-items"></div>
-      <div id="str-env"></div>
+    <div class="ig-card">
+      <div class="ig-sec ig-sec-green">💪 強み（4タイプ）</div>
+      <div class="ig-sub">Gallup ストレングスファインダー準拠</div>
+      <div class="ig-bars" id="str-bars"></div>
+      <div class="ig-note" id="str-note"></div>
     </div>
-    <div class="r-card">
-      <div class="r-card-header">
-        <div class="r-num rn-pink">④</div>
-        <div><div class="r-card-title">理想の生活ロードマップ</div><div class="r-card-sub">現状 → 短期 → 中期 → 長期</div></div>
-      </div>
-      <div class="life-tl" id="life-tl"></div>
-      <div class="action-box"><h4>🚀 今すぐ取り組むべきこと</h4><div id="action-items"></div></div>
+    <div class="ig-card span2">
+      <div class="ig-sec ig-sec-amber">🧭 興味タイプ RIASEC（6タイプ）</div>
+      <div class="ig-sub">どの活動に興味が向くか（厚労省も使用）</div>
+      <div class="ig-bars" id="int-bars"></div>
+      <div class="ig-note" id="int-note"></div>
     </div>
-    <div class="btn-row">
-      <button class="btn-pdf" onclick="downloadPDF()">📄 PDFで保存する</button>
-      <button class="btn-restart" onclick="location.reload()">🔄 もう一度診断する</button>
+    <div class="ig-card span2">
+      <div class="ig-sec ig-sec-gray">🏢 合う環境 / 合いにくい環境</div>
+      <div id="env-wrap"></div>
     </div>
-    <div class="footer-note">carise キャリア診断ツール　|　キャリアアドバイザーが設計</div>
+    <div class="ig-card">
+      <div class="ig-sec ig-sec-pink">🌅 理想の生活ロードマップ</div>
+      <div class="ig-tl" id="life-tl"></div>
+    </div>
+    <div class="ig-card">
+      <div class="ig-sec ig-sec-blue">🚀 今すぐ取り組むこと</div>
+      <div class="ig-acts" id="action-items"></div>
+    </div>
+    <div class="ig-oneline span2" id="ig-oneline"></div>
+    <div class="footer-note span2">carise キャリア診断ツール　|　キャリアアドバイザーが設計</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-pdf" onclick="downloadIMG()">📷 画像で保存</button>
+    <button class="btn-pdf btn-pdf2" onclick="downloadPDF()">📄 PDFで保存する</button>
+    <button class="btn-restart" onclick="location.reload()">🔄 もう一度診断する</button>
   </div>
 </div>
 
@@ -751,76 +811,75 @@ function showResult(){
   document.getElementById('result-page').style.display='block';
   window.scrollTo(0,0);
 
-  const topVal=Object.entries(SC.val).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]);
+  const valSorted=Object.entries(SC.val).sort((a,b)=>b[1]-a[1]);
+  const topVal=valSorted.slice(0,3).map(e=>e[0]);
   const allInt=Object.entries(SC.int).sort((a,b)=>b[1]-a[1]);
-  const topInt=allInt.slice(0,2).map(e=>e[0]);
-  const topStr=Object.entries(SC.str).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
-  const v0=topVal[0],v1=topVal[1]||topVal[0],s0=topStr[0],i0=topInt[0];
+  const strSorted=Object.entries(SC.str).sort((a,b)=>b[1]-a[1]);
+  const topStr=strSorted.slice(0,2).map(e=>e[0]);
+  const v0=topVal[0],v1=topVal[1]||topVal[0],s0=topStr[0],s1=topStr[1]||topStr[0],i0=allInt[0][0];
+  const intCore=(ID[i0]?ID[i0].label:i0).replace(/（.*）/,'');
+  const fs=t=>t?t.split('。')[0]+'。':'';
 
-  /* ヒーローバッジ */
+  /* ヘッダー */
+  document.getElementById('ig-title').textContent=`「${v0}」を活かす ${intCore}×${s0} タイプ`;
+  document.getElementById('ig-theme').textContent=`「${v0}」が満たされ、「${s0}」を発揮できる環境で、あなたは最大化する。`;
   const hb=document.getElementById('hero-badges');
-  topVal.slice(0,2).forEach(v=>{const b=document.createElement('span');b.className='hero-badge hb-purple';b.textContent=v;hb.appendChild(b)});
-  [{k:i0,cls:'hb-amber'}].forEach(({k,cls})=>{if(ID[k]){const b=document.createElement('span');b.className=`hero-badge ${cls}`;b.textContent=ID[k].label;hb.appendChild(b)}});
-  [{k:s0,cls:'hb-green'}].forEach(({k,cls})=>{const b=document.createElement('span');b.className=`hero-badge ${cls}`;b.textContent=k;hb.appendChild(b)});
+  topVal.slice(0,2).forEach(v=>{const b=document.createElement('span');b.className='hero-badge hb-purple';b.textContent=v;hb.appendChild(b);});
+  (()=>{const b=document.createElement('span');b.className='hero-badge hb-amber';b.textContent=intCore;hb.appendChild(b);})();
+  (()=>{const b=document.createElement('span');b.className='hero-badge hb-green';b.textContent=s0;hb.appendChild(b);})();
 
-  /* 総合所見 */
+  /* 総合サマリー */
   document.getElementById('soken-text').textContent=
-    `あなたは「${v0}」と「${v1}」を核心的な価値観として持ち、${VD[v0]?VD[v0].desc:''} `+
-    `興味タイプは「${ID[i0]?ID[i0].label:i0}」が最も高く、${ID[i0]?ID[i0].desc:''} `+
-    `強みは「${s0}」— ${SD[s0]?SD[s0].desc:''} `+
+    `あなたは「${v0}」と「${v1}」を核心的な価値観として持っています。`+
+    `興味タイプは「${ID[i0]?ID[i0].label:i0}」が最も高く、強みは「${s0}」。`+
     `この3つが重なる環境を選ぶことで、満足度・成長速度・パフォーマンスが最大化されます。`;
 
-  /* ① 価値観 */
-  const vt=document.getElementById('val-tags');
-  topVal.forEach(v=>{const t=document.createElement('span');t.className='tag t-purple';t.textContent=v;vt.appendChild(t)});
-  document.getElementById('val-main').textContent=
-    `あなたが最も大切にしている価値観はこの3つです。これらが満たされない環境では、どれだけ条件が良くても長続きしにくくなります。転職・就職時の「ゆずれない軸」として使ってください。`;
-  const vi=document.getElementById('val-items');
+  /* 価値観 TOP3 */
+  const vl=document.getElementById('val-list');
   topVal.forEach(v=>{
     if(!VD[v])return;
-    const b=document.createElement('div');b.className='desc-box';b.style.marginBottom='12px';
-    b.innerHTML=`<div class="desc-title">🔹 ${v}</div>${VD[v].desc}<div class="desc-job">${VD[v].job}</div>`;
-    vi.appendChild(b);
+    const d=document.createElement('div');d.className='ig-vitem';
+    d.innerHTML=`<div class="n">${v}</div><div class="d">${fs(VD[v].desc)}</div>`;
+    vl.appendChild(d);
   });
-  if(VD[v0])document.getElementById('val-env').appendChild(makeEnvGrid(VD[v0].good,VD[v0].bad));
-  document.getElementById('val-warn').textContent=
-    `${topVal.join('・')}が満たされない環境は、条件が良くても消耗しやすくなります。面接で「この環境で${v0}を感じられるか」を必ず確認してください。`;
 
-  /* ② 興味 */
-  const mc=['m1','m2','m3','m-other','m-other','m-other'],mn=['🥇','🥈','🥉','4','5','6'];
+  /* 強み バー（4タイプ） */
+  const sb=document.getElementById('str-bars');
+  const sMax=strSorted[0][1]||1;
+  strSorted.forEach(([k,v],i)=>{
+    const w=Math.max(8,Math.round(v/sMax*100));
+    const row=document.createElement('div');row.className='ig-bar';
+    row.innerHTML=`<div class="lab">${k}</div><div class="track"><div class="fill fill-green${i===0?' top':''}" style="width:${w}%"></div></div><div class="pt">${v}pt</div>`;
+    sb.appendChild(row);
+  });
+  document.getElementById('str-note').innerHTML=
+    `<b>${s0}</b>：${fs(SD[s0]&&SD[s0].desc)}`+((s1!==s0&&SD[s1])?`<br><b>${s1}</b>：${fs(SD[s1].desc)}`:'');
+
+  /* 興味 RIASEC バー（6タイプ） */
+  const ib=document.getElementById('int-bars');
+  const iMax=allInt[0][1]||1;
   allInt.forEach(([k,v],i)=>{
-    const row=document.createElement('div');row.className='rank-row';
-    const info=ID[k];
-    row.innerHTML=`<div class="rank-medal ${mc[i]}">${mn[i]}</div>`+
-      `<div class="rank-info"><div class="rank-label">${info?info.label:k}</div>`+
-      `<div class="rank-desc">${info?info.job:''}</div></div>`+
-      `<div class="rank-pt">${v}pt</div>`;
-    document.getElementById('int-ranks').appendChild(row);
+    const w=Math.max(8,Math.round(v/iMax*100));
+    const lab=ID[k]?ID[k].label:k;
+    const row=document.createElement('div');row.className='ig-bar';
+    row.innerHTML=`<div class="lab">${lab}</div><div class="track"><div class="fill fill-amber${i===0?' top':''}" style="width:${w}%"></div></div><div class="pt">${v}pt</div>`;
+    ib.appendChild(row);
   });
-  const im=document.getElementById('int-main');
-  if(ID[i0])im.innerHTML=`<div class="desc-title">🔹 ${ID[i0].label}</div>${ID[i0].desc}<div class="desc-job">${ID[i0].job}</div>`;
-  if(ID[i0])document.getElementById('int-env').appendChild(makeEnvGrid(ID[i0].good,ID[i0].bad));
+  document.getElementById('int-note').innerHTML=ID[i0]?`<b>${ID[i0].label}</b>：${fs(ID[i0].desc)}<br>活かしやすい職種・環境＝${ID[i0].job}`:'';
 
-  /* ③ 強み */
-  const st=document.getElementById('str-tags');
-  topStr.forEach(s=>{const t=document.createElement('span');t.className='tag t-green';t.textContent=s;st.appendChild(t)});
-  const si=document.getElementById('str-items');
-  topStr.forEach(s=>{
-    if(!SD[s])return;
-    const b=document.createElement('div');b.className='desc-box';b.style.marginBottom='12px';
-    b.innerHTML=`<div class="desc-title">🔹 ${s}</div>${SD[s].desc}<div class="desc-job">${SD[s].job}</div>`;
-    si.appendChild(b);
-  });
-  if(SD[s0])document.getElementById('str-env').appendChild(makeEnvGrid(SD[s0].good,SD[s0].bad));
+  /* 合う／合わない環境（価値観1位＋強み1位を統合） */
+  const goodAll=[...new Set([...((VD[v0]&&VD[v0].good)||[]),...((SD[s0]&&SD[s0].good)||[])])].slice(0,4);
+  const badAll=[...new Set([...((VD[v0]&&VD[v0].bad)||[]),...((SD[s0]&&SD[s0].bad)||[])])].slice(0,4);
+  document.getElementById('env-wrap').appendChild(makeEnvGrid(goodAll,badAll));
 
-  /* ④ 理想の生活 */
+  /* 理想の生活ロードマップ */
   const tl=document.getElementById('life-tl');
-  [{p:'現在',v:SC.life.now,dot:'now'},{p:'短期（1〜2年後）',v:SC.life.short,dot:''},{p:'中期（3〜5年後）',v:SC.life.mid,dot:''},{p:'長期（5年以上先）',v:SC.life.long,dot:''}]
+  [{p:'現在',v:SC.life.now,dim:true},{p:'短期（1〜2年後）',v:SC.life.short},{p:'中期（3〜5年後）',v:SC.life.mid},{p:'長期（5年以上先）',v:SC.life.long}]
   .forEach((item,i,arr)=>{
-    const div=document.createElement('div');div.className='tl-item';
     const last=i===arr.length-1;
-    div.innerHTML=`<div class="tl-left"><div class="tl-dot ${item.dot}"></div>${!last?'<div class="tl-line"></div>':''}</div>`+
-      `<div class="tl-content" style="padding-bottom:${last?'0':'22px'}"><div class="tl-period">${item.p}</div><div class="tl-text">${item.v||'—'}</div></div>`;
+    const div=document.createElement('div');div.className='ig-tlitem';
+    div.innerHTML=`<div class="ig-tldot"><div class="c${item.dim?' dim':''}"></div>${!last?'<div class="l"></div>':''}</div>`+
+      `<div class="ig-tlbody"><div class="ig-tlp">${item.p}</div><div class="ig-tlt">${item.v||'—'}</div></div>`;
     tl.appendChild(div);
   });
 
@@ -828,19 +887,47 @@ function showResult(){
   const ai=document.getElementById('action-items');
   [
     `【環境の確認】今の職場で「${v0}」と「${s0}」が活かせているか棚卸しする`,
-    `【興味の深掘り】「${ID[i0]?ID[i0].label:i0}」タイプとして、どんなスキルを伸ばせるか具体化する`,
-    `【副業・発信の検討】理想の生活に向けて、今の仕事外で収入の柱をつくる第一歩を踏み出す`,
-    `【転職軸の言語化】「${topVal.join('・')}」が満たされる求人かどうかを判断基準にして情報収集を始める`
+    `【興味の深掘り】「${intCore}」タイプとして、どんなスキルを伸ばせるか具体化する`,
+    `【収入の柱】理想の生活に向けて、仕事外で収入の柱をつくる第一歩を踏み出す`,
+    `【転職軸の言語化】「${topVal.join('・')}」が満たされる求人かを判断基準にして情報収集を始める`
   ].forEach((a,i)=>{
-    const div=document.createElement('div');div.className='action-item';
-    div.innerHTML=`<div class="action-num">${i+1}</div><div class="action-text">${a}</div>`;
+    const div=document.createElement('div');div.className='ig-act';
+    div.innerHTML=`<div class="num">${i+1}</div><div class="t">${a}</div>`;
     ai.appendChild(div);
   });
-  /* スマホはボタン文言を変更 */
+
+  /* 一言まとめ */
+  document.getElementById('ig-oneline').innerHTML=
+    `<div class="lab">🎯 あなたへの一言</div>`+
+    `<div class="txt">あなたは「${topVal.join('・')}」を大切にし、${intCore}な関わり方で「${s0}」を発揮する人。\nこの3つが揃う場所を選べば、満足度も成長スピードも最大化します。</div>`;
+
+  /* スマホはPDFボタン文言を変更 */
   if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
-    const pb=document.querySelector('.btn-pdf');
-    if(pb)pb.textContent='📄 PDFで保存する方法を見る';
+    const pb=document.querySelector('.btn-pdf2');
+    if(pb)pb.textContent='📄 PDFで保存（手順）';
   }
+}
+
+/* 結果を画像（PNG）でダウンロード */
+function downloadIMG(){
+  if(typeof html2canvas!=='function'){
+    alert('画像化ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再読み込みしてお試しください。');return;
+  }
+  const el=document.getElementById('result-content');
+  const btn=document.querySelector('.btn-row .btn-pdf');
+  const old=btn?btn.textContent:'';
+  if(btn){btn.textContent='⏳ 画像を生成中...';btn.disabled=true;}
+  html2canvas(el,{scale:2,backgroundColor:'#faf8f3',useCORS:true,logging:false}).then(canvas=>{
+    const link=document.createElement('a');
+    link.download='キャリア診断結果_carise.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  }).catch(err=>{
+    console.error(err);
+    alert('画像の生成に失敗しました。お手数ですが「PDFで保存」をお試しください。');
+  }).finally(()=>{
+    if(btn){btn.textContent=old;btn.disabled=false;}
+  });
 }
 
 function downloadPDF(){
